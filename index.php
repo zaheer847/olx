@@ -29,29 +29,7 @@ include_once 'connection.php';
     <div class="row w-100 pl-5">
 
         <div class="col-lg-12 col-sm-12">
-            <ul class="list-group list-group-horizontal">
-                <li class="list-group-item col-lg-1"> <select>
-                        <option class="col-lg-1">All Categories</option>
-                        <option class="col-lg-1"> <?php
-
-                            $sql = "SELECT category.cat_name,product.prod_name FROM category LEFT OUTER JOIN product ON category.cat_id = product.cat_id";
-                            $result = $conn->query($sql);
-                            if(mysqli_num_rows($result) == 0) {
-                                echo "There is nothing else to do! :)";
-                            }
-                            else{
-                                ?>
-                                <?php
-                                    while($row = mysqli_fetch_assoc($result)){
-                                        ?>
-                                        <?php echo $row["cat_name"]." <br>".$row["prod_name"];  ?>
-                                        <?php
-                                    }?>
-
-                                <?php
-                            }?></option>
-
-                    </select></li>
+            <ul class="list-group list-group-horizontal" name="category">
                 <li class="list-group-item"><a href="#">Mobile Phone</a></li>
                 <li class="list-group-item"><a href="#">Cars</a></li>
                 <li class="list-group-item"><a href="#">Motorcycles</a></li>
@@ -64,6 +42,44 @@ include_once 'connection.php';
 
 
         </div>
+    </div>
+    <div class="row w-100 pl-5">
+        <div class="col">
+            <?php
+            $sql_cat= "SELECT cat_name,cat_id from category Where parent_id= 0 ";
+            $result_cat=mysqli_query($conn,$sql_cat);?>
+            <ul class="list-group list-group-horizontal" name="category">
+                <?php while ($row_cat=mysqli_fetch_assoc($result_cat)){
+                    ?>
+                    <li class="list-group-item col-lg-1"><?php echo $row_cat['cat_name']; ?></li>
+                    <?php
+                    $sql_subcat= "SELECT cat_name from category Where parent_id =".$row_cat['cat_id'];
+                    $result_subcat=mysqli_query($conn,$sql_subcat);
+                    while ($row_subcat=mysqli_fetch_assoc($result_subcat)){
+                        echo $row_subcat['cat_name'].'<br>';
+                    }
+
+                } ?>
+
+        </div><?php
+        $sql_cat= "SELECT cat_name,cat_id from category Where parent_id= 0 ";
+        $result_cat=mysqli_query($conn,$sql_cat);?>
+        <select>
+            <?php while ($row_cat=mysqli_fetch_assoc($result_cat)){
+            ?>
+            <option>
+                <?php echo $row_cat['cat_name']; ?><?php
+                $sql_subcat= "SELECT cat_name from category Where parent_id =".$row_cat['cat_id'];
+                $result_subcat=mysqli_query($conn,$sql_subcat);
+                while ($row_subcat=mysqli_fetch_assoc($result_subcat)){
+                    echo $row_subcat['cat_name'].'<br>';
+                }
+
+                } ?>
+            </option>
+
+        </select>
+
     </div>
 </div>
 </body>
